@@ -7,6 +7,10 @@ import org.junit.jupiter.api.TestInstance;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
 import javax.sql.DataSource;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -35,16 +39,48 @@ public class TestTimestamp
     this.context.close();
   }
 
+  /**
+   * Inserts using a <code>java.sql.Date</code>.
+   *
+   * @throws SQLException
+   */
   @Test
-  public void testInsertAsDate()
+  public void testInsertAsDate() throws SQLException
   {
+    try (
+      Connection con = this.dataSource.getConnection();
+      PreparedStatement st = con.prepareStatement("insert into test.dates values(?)");
+    )
+    {
+      java.sql.Date date = new java.sql.Date(TestTimestamp.DATE.getTime());
+      st.setDate(1, date);
+      st.execute();
+      con.commit();
+    }
+  }
+
+  /**
+   * Inserts using a <code>Timestamp</code>.
+   *
+   * @throws SQLException
+   */
+  @Test
+  public void testInsertAsTimestamp() throws SQLException
+  {
+    try (
+      Connection con = this.dataSource.getConnection();
+      PreparedStatement st = con.prepareStatement("insert into test.dates values(?)");
+    )
+    {
+      Timestamp timestamp = new Timestamp(TestTimestamp.DATE.getTime());
+      st.setTimestamp(1, timestamp);
+      st.execute();
+      con.commit();
+    }
   }
 
   @Test
-  public void testInsertAsTimestamp()
-  {}
-
-  @Test
   public void testInsertAsString()
-  {}
+  {
+  }
 }
