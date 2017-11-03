@@ -79,8 +79,23 @@ public class TestTimestamp
     }
   }
 
+  /**
+   * Tests insert using a <code>String</code>.
+   *
+   * @throws SQLException
+   */
   @Test
-  public void testInsertAsString()
+  public void testInsertAsString() throws SQLException
   {
+    try (
+      Connection con = this.dataSource.getConnection();
+      PreparedStatement st = con.prepareStatement("insert into test.dates values(?)");
+    )
+    {
+      String stamp = TestTimestamp.FORMAT.format(TestTimestamp.DATE);
+      st.setString(1, stamp);
+      st.execute();
+      con.commit();
+    }
   }
 }
