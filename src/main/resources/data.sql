@@ -1,1 +1,1 @@
-select * from test.dates;
+insert into test.dates values(current_timestamp);
